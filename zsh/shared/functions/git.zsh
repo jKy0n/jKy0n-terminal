@@ -1,0 +1,117 @@
+#
+#        Title:      git.zsh
+#        Brief:      Funções git genéricas — funciona com qualquer repo registrado (ShellScript, jKy0n-terminal, etc.)
+#
+
+typeset -gA GIT_SYNC_REPOS=(
+    shellscript  "$HOME/ShellScript"
+    terminal     "$HOME/.jKy0n-terminal"
+)
+
+typeset -ga GIT_SYNC_HOSTS=(
+    theseusmachine
+    viamar-pc
+    crisnote
+    builder
+)
+
+#------------------------------------------------------------------------------
+# git-cp: commit + push do repo atual, qualquer um que seja.
+#------------------------------------------------------------------------------
+git-cp() {
+    if [[ -z "$1" ]]; then
+        print -P "%F{red}❌ Erro:%f Faltou a mensagem de commit."
+        print "Uso correto: git-cp \"sua mensagem\""
+        return 1
+    fi
+    git commit -am "$*" && git push
+}
+
+#------------------------------------------------------------------------------
+# _git-sync-detect: descobre qual repo registrado corresponde ao $PWD atual.
+#------------------------------------------------------------------------------
+_git-sync-detect() {
+    local name path
+    for name path in "${(@kv)GIT_SYNC_REPOS}"; do
+        [[ "$PWD" == "$path"* ]] && { echo "$name"; return 0; }
+    done
+    return 1
+}
+
+#------------------------------------------------------------------------------
+# git-cp-sync: commit + push do repo atual, e sincroniza esse MESMO repo
+#              nas outras máquinas — detecta o alvo sozinho pelo $PWD.
+#------------------------------------------------------------------------------
+git-cp-sync() {
+    git-cp "$@" || return 1
+    local target
+    if target="$(_git-sync-detect)"; then
+        git-sync "$target"
+    else
+        print -P "%F{yellow}⚠️  Repo atual não está em GIT_SYNC_REPOS — pulei o sync remoto.%f"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# git-status: pull + status local. Sem argumento, usa o repo do $PWD.
+#------------------------------------------------------------------------------
+git-status() {
+    local repo="${1:-$PWD}"
+    print -P "%F{cyan}🔄 Atualizando:%f $repo"
+    git -C "$repo" pull --ff-only || return 1
+    print
+    git -C "$repo" status -sb
+}
+
+#------------------------------------------------------------------------------
+# Helpers internos via SSH.
+#------------------------------------------------------------------------------
+_git-sync-remote() {
+    ssh -o BatchMode=yes -o ConnectTimeout=5 "$1" "cd $2 && git pull --ff-only"
+}
+
+_git-status-remote() {
+    ssh -o BatchMode=yes -o ConnectTimeout=5 "$1" "cd $2 && git pull --ff-only --quiet && git status -sb"
+}
+
+#------------------------------------------------------------------------------
+# git-sync [nome]: sem argumento, sincroniza TODOS os repos registrados em
+#                  todas as máquinas. Com argumento, só aquele repo.
+#------------------------------------------------------------------------------
+git-sync() {
+    local target="$1" name path host failed=0
+
+    if [[ -n "$target" && -z "${GIT_SYNC_REPOS[$target]}" ]]; then
+        print -P "%F{red}❌ Erro:%f '$target' não registrado. Opções: ${(k)GIT_SYNC_REPOS}"
+        return 1
+    fi
+
+    for name path in "${(@kv)GIT_SYNC_REPOS}"; do
+        [[ -n "$target" && "$name" != "$target" ]] && continue
+        for host in "${GIT_SYNC_HOSTS[@]}"; do
+            print; print -P "%F{blue}🔄 [$name] Atualizando $host...%f"
+            if _git-sync-remote "$host" "$path"; then
+                print -P "%F{green}✅ $host atualizado%f"
+            else
+                print -P "%F{red}❌ $host falhou%f"; failed=1
+            fi
+        done
+    done
+    return "$failed"
+}
+
+#------------------------------------------------------------------------------
+# git-status-all [nome]: mesmo padrão do git-sync, mas só mostra status.
+#------------------------------------------------------------------------------
+git-status-all() {
+    local target="$1" name path host failed=0
+
+    for name path in "${(@kv)GIT_SYNC_REPOS}"; do
+        [[ -n "$target" && "$name" != "$target" ]] && continue
+        for host in "${GIT_SYNC_HOSTS[@]}"; do
+            print; print -P "%F{blue}🖥️  [$name] $host%f"
+            _git-status-remote "$host" "$path" || { print -P "%F{red}❌ $host falhou%f"; failed=1; }
+        done
+    done
+    return "$failed"
+}
