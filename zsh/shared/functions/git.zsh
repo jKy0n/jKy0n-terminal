@@ -99,6 +99,10 @@ git-sync() {
     for name path in "${(@kv)GIT_SYNC_REPOS}"; do
         [[ -n "$target" && "$name" != "$target" ]] && continue
         for host in "${GIT_SYNC_HOSTS[@]}"; do
+            if [[ "${(L)host}" == "${(L)HOST}" ]]; then
+                print; print -P "%F{yellow}⏭️  [$name] $host é esta máquina, pulando%f"
+                continue
+            fi
             print; print -P "%F{blue}🔄 [$name] Atualizando $host...%f"
             if _git-sync-remote "$host" "$path"; then
                 print -P "%F{green}✅ $host atualizado%f"
@@ -119,6 +123,10 @@ git-status-all() {
     for name path in "${(@kv)GIT_SYNC_REPOS}"; do
         [[ -n "$target" && "$name" != "$target" ]] && continue
         for host in "${GIT_SYNC_HOSTS[@]}"; do
+            if [[ "${(L)host}" == "${(L)HOST}" ]]; then
+                print; print -P "%F{yellow}⏭️  [$name] $host é esta máquina, pulando%f"
+                continue
+            fi
             print; print -P "%F{blue}🖥️  [$name] $host%f"
             _git-status-remote "$host" "$path" || { print -P "%F{red}❌ $host falhou%f"; failed=1; }
         done
