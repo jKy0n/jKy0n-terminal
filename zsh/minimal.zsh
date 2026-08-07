@@ -10,7 +10,10 @@ source "$ZDOTDIR/shared/keybinds.zsh"
 
 # Completion básica — sem fzf-tab: depende do binário fzf e de um
 # terminal mais capaz do que o console do kernel costuma oferecer.
-autoload -Uz compinit && compinit
+local zcompdump_d="${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
+[[ -d "$zcompdump_d" ]] || mkdir -p "$zcompdump_d"
+autoload -Uz compinit
+compinit -d "$zcompdump_d/zcompdump"
 setopt COMPLETE_ALIASES
 
 # autosuggestions e syntax-highlighting são scripts zsh puros, sem

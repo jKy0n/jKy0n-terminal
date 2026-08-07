@@ -7,8 +7,10 @@
 ZSH_PLUGINS_D="$HOME/.config/zsh/plugins"
 
 # 1. Completion precisa existir antes de qualquer coisa que dependa dela
+local zcompdump_d="${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
+[[ -d "$zcompdump_d" ]] || mkdir -p "$zcompdump_d"
 autoload -Uz compinit
-compinit
+compinit -d "$zcompdump_d/zcompdump"
 setopt COMPLETE_ALIASES
 
 # 2. fzf-tab: logo após compinit, antes de plugins que "embrulham" widgets
