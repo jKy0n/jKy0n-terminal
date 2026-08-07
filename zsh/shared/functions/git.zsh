@@ -67,11 +67,11 @@ git-status() {
 # Helpers internos via SSH.
 #------------------------------------------------------------------------------
 _git-sync-remote() {
-    ssh -o BatchMode=yes -o ConnectTimeout=5 "$1" "cd $2 && git pull --ff-only"
+    ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$1" "cd $2 && git pull --ff-only"
 }
 
 _git-status-remote() {
-    ssh -o BatchMode=yes -o ConnectTimeout=5 "$1" "cd $2 && git pull --ff-only --quiet && git status -sb"
+    ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$1" "cd $2 && git pull --ff-only --quiet && git status -sb"
 }
 
 #------------------------------------------------------------------------------
