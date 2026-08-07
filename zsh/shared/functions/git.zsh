@@ -67,11 +67,21 @@ git-status() {
 # Helpers internos via SSH.
 #------------------------------------------------------------------------------
 _git-sync-remote() {
-    ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$1" "cd $2 && git pull --ff-only"
+    local host="$1" path="$2"
+    ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$host" "cd $path && git pull --ff-only" >/dev/null 2>&1
+    local local_hash remote_hash
+    local_hash="$(git -C "$path" rev-parse HEAD 2>/dev/null)"
+    remote_hash="$(ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$host" "git -C $path rev-parse HEAD" 2>/dev/null)"
+    [[ -n "$remote_hash" && "$local_hash" == "$remote_hash" ]]
 }
 
 _git-status-remote() {
-    ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$1" "cd $2 && git pull --ff-only --quiet && git status -sb"
+    local host="$1" path="$2"
+    ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$host" "cd $path && git pull --ff-only --quiet && git status -sb" 2>&1
+    local local_hash remote_hash
+    local_hash="$(git -C "$path" rev-parse HEAD 2>/dev/null)"
+    remote_hash="$(ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$host" "git -C $path rev-parse HEAD" 2>/dev/null)"
+    [[ -n "$remote_hash" && "$local_hash" == "$remote_hash" ]]
 }
 
 #------------------------------------------------------------------------------
