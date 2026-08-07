@@ -18,7 +18,8 @@ if [[ -t 0 ]] && \
     [[ -x "$(command -v tmux)" ]] && \
     [[ -z "$TMUX" ]] && \
     [[ $- == *i* ]] && \
-    [[ "$TERM_PROGRAM" != "vscode" ]]; then
+    [[ "$TERM_PROGRAM" != "vscode" ]] && \
+    [[ -z "$NO_TMUX" ]]; then
 
     # Gera nome da sessão numérico sequencial
     session_number=$(tmux list-sessions -F '#{session_name}' 2>/dev/null |
