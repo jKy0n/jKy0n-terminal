@@ -4,7 +4,7 @@
 #
 
 # Config da máquina atual (pode setar JKYON_HEADLESS=true, ex: Builder)
-local host="${(L)$(hostname)}"
+local host="${(L)HOST}"
 [[ -r "$ZDOTDIR/machines/$host.zsh" ]] && source "$ZDOTDIR/machines/$host.zsh"
 
 if [[ "$TERM" == "linux" || "$JKYON_HEADLESS" == "true" ]]; then
