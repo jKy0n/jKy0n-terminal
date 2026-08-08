@@ -77,9 +77,11 @@ Definidas em `zsh/shared/functions/git.zsh`, disponíveis em qualquer shell:
 Outros módulos automáticos, sem comando pra digitar: detecção de `ssh-agent` correto (evita conflito com gpg-agent), clipboard com fallback OSC52 quando não há sessão gráfica, e correção de comandos via `pay-respects`.
 
 ## 🗂️ Estrutura
+```
 jKy0n-terminal/
     ├── zsh/ # shared/ (módulos comuns), machines/ (overrides por host), secrets/ (cifrado), plugins/ (submodules)
     ├── tmux/ # tmux.conf, conf.d/, plugins/tpm (submodule)
     ├── alacritty/ # alacritty.toml + tema
     ├── docs (screenshots e documentação)
     └── install.sh
+```
