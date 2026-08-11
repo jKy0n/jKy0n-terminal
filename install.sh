@@ -47,6 +47,7 @@ link() {
 link "$REPO/zsh"         "$HOME/.config/zsh"
 link "$REPO/tmux"        "$HOME/.config/tmux"
 link "$REPO/alacritty"   "$HOME/.config/alacritty"
+link "$REPO/kitty"       "$HOME/.config/kitty"
 link "$REPO/zsh/.zshenv" "$HOME/.zshenv"
 
 # 6. Binários de sistema — checa e sugere, nunca instala sozinho sem você mandar
@@ -69,5 +70,24 @@ check_pkg() {
 check_pkg fzf    fzf    "provavelmente app-shells/fzf"
 check_pkg zoxide zoxide "provavelmente app-shells/zoxide"
 check_pkg atuin  atuin  "pode precisar do overlay GURU, confirme antes"
+check_pkg kitty  kitty  "provavelmente x11-terms/kitty"
+
+# kitty-terminfo é diferente dos outros: não instala binário nenhum, só uma
+# entry de terminfo. command -v não serve pra detectar isso — precisa checar
+# via infocmp se a entry xterm-kitty já existe no sistema.
+if infocmp xterm-kitty >/dev/null 2>&1; then
+    echo "✅ terminfo xterm-kitty já presente"
+else
+    echo "❌ terminfo xterm-kitty não encontrado."
+    if command -v pacman >/dev/null 2>&1; then
+        echo "   sugestão: sudo pacman -S kitty-terminfo"
+    elif command -v emerge >/dev/null 2>&1; then
+        echo "   sugestão: emerge -s kitty-terminfo   # x11-terms/kitty-terminfo"
+    else
+        echo "   gerenciador de pacote não identificado — instale kitty-terminfo manualmente."
+    fi
+    echo "   alternativa sem instalar nada: use 'kitten ssh' no lugar de 'ssh' —"
+    echo "   ele copia o terminfo pro remoto automaticamente na conexão."
+fi
 
 echo "== Concluído. Abra um terminal novo pra aplicar. =="

@@ -7,15 +7,15 @@ export EDITOR=nvim
 export SUDO_EDITOR=nvim
 export SYSTEMD_EDITOR=nvim
 
-export CARGO_HOME="$HOME/.build/cargo"
-export CARGO_TARGET_DIR="$HOME/.build/cargo-target"
+export CARGO_HOME="$HOME/.builds/cargo"
+export CARGO_TARGET_DIR="$HOME/.builds/cargo-target"
 
-export PIP_CACHE_DIR="$HOME/.build/pip-cache"
+export PIP_CACHE_DIR="$HOME/.builds/pip-cache"
 
 # DISTCC_HOSTS mora cifrado em zsh/secrets/ desde o passo 2
 [[ -r "$HOME/.config/zsh/secrets/distcc-hosts.zsh" ]] && source "$HOME/.config/zsh/secrets/distcc-hosts.zsh"
 
-export CCACHE_DIR="$HOME/.build/ccache"
+export CCACHE_DIR="$HOME/.builds/ccache"
 export CCACHE_COMPRESS=1
 export CCACHE_MAXSIZE=10G
 
