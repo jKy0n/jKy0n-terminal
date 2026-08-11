@@ -9,6 +9,7 @@ export SYSTEMD_EDITOR=nvim
 
 export CARGO_HOME="$HOME/.build/cargo"
 export CARGO_TARGET_DIR="$HOME/.build/cargo-target"
+
 export PIP_CACHE_DIR="$HOME/.build/pip-cache"
 
 # DISTCC_HOSTS mora cifrado em zsh/secrets/ desde o passo 2
@@ -20,6 +21,7 @@ export CCACHE_MAXSIZE=10G
 
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export PATH="$HOME/.local/bin:$PATH"
+
 export PATH="$PATH:$HOME/.spicetify"
 
 export PAY_RESPECTS_REQUIRE_CONFIRMATION="true"
