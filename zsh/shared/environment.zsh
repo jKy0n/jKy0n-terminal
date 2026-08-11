@@ -7,6 +7,11 @@ export EDITOR=nvim
 export SUDO_EDITOR=nvim
 export SYSTEMD_EDITOR=nvim
 
+# Terminal padrão — Kitty desde a migração. Alacritty fica no repo como
+# fallback, mas não é mais o default de nenhuma ferramenta que respeite
+# essa variável (rofi, xdg-terminal-exec, "abrir terminal aqui" etc.)
+export TERMINAL=kitty
+
 export CARGO_HOME="$HOME/.builds/cargo"
 export CARGO_TARGET_DIR="$HOME/.builds/cargo-target"
 
