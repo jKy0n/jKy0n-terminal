@@ -125,13 +125,18 @@ EOF
     done
 
     # ========== VERIFY CLIPBOARD BACKEND ==========
+    # Sem display gráfico NÃO é erro fatal por si só: se houver TERM ou
+    # SSH_TTY, ainda sobra o fallback OSC 52 (seção COPY TO CLIPBOARD, mais
+    # abaixo) que não depende de socket Wayland/X11 - a sequência de escape
+    # viaja pelo próprio stream SSH e quem decodifica é o terminal do lado
+    # do cliente. Só falhamos aqui se não sobrar NENHUM caminho possível.
 
-    if [[ -z "$clipboard_backend" ]]; then
-        echo "❌ Erro: nenhum display gráfico detectado (\$WAYLAND_DISPLAY e \$DISPLAY vazios)"
+    if [[ -z "$clipboard_backend" ]] && [[ -z "$TERM" ]] && [[ -z "$SSH_TTY" ]]; then
+        echo "❌ Erro: nenhum display gráfico detectado (\$WAYLAND_DISPLAY e \$DISPLAY vazios) e nenhum terminal compatível com OSC 52"
         return 1
     fi
 
-    if ! command -v "$clipboard_bin" &> /dev/null; then
+    if [[ -n "$clipboard_backend" ]] && ! command -v "$clipboard_bin" &> /dev/null; then
         echo "❌ Erro: $clipboard_bin não está instalado (backend: $clipboard_backend)"
         if [[ "$clipboard_backend" == "wayland" ]]; then
             echo "   Instale com: sudo emerge -av gui-apps/wl-clipboard"
