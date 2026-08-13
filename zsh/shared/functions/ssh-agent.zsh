@@ -1,4 +1,5 @@
-# ~/.config/zsh/zshrc.d/ssh-agent.zsh
+# ~/.jKy0n-terminal/zsh/shared/functions/ssh-agent.zsh
+
 
 # 1. Tenta herdar variáveis do systemd (PAM/Gnome-Keyring/SSH)
 #    Retry curto: logo após login SSH, o systemd --user pode ainda não
