@@ -31,6 +31,12 @@ export PATH="$PATH:$HOME/.spicetify"
 
 export PAY_RESPECTS_REQUIRE_CONFIRMATION="true"
 
+# GPG_TTY: evita que o pinentry desenhe no tty errado ao trocar de pane
+# do tmux — sem isso, o gpg-agent lembra do tty da última chamada e o
+# pinentry-curses "borra" o pane atual tentando desenhar lá.
+export GPG_TTY=$(tty)
+command -v gpg-connect-agent >/dev/null 2>&1 && gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
+
 setopt EXTENDED_GLOB
 setopt GLOB_DOTS
 setopt INTERACTIVE_COMMENTS
