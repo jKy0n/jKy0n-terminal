@@ -68,19 +68,19 @@ git-status() {
 #------------------------------------------------------------------------------
 _git-sync-remote() {
     local host="$1" repo_path="$2"
-    ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$host" "cd $repo_path && git pull --ff-only" >/dev/null 2>&1
+    ssh -o BatchMode=yes -o ConnectTimeout=5 "$host" "cd $repo_path && git pull --ff-only" >/dev/null 2>&1
     local local_hash remote_hash
     local_hash="$(git -C "$repo_path" rev-parse HEAD 2>/dev/null)"
-    remote_hash="$(ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$host" "git -C $repo_path rev-parse HEAD" 2>/dev/null)"
+    remote_hash="$(ssh -o BatchMode=yes -o ConnectTimeout=5 "$host" "git -C $repo_path rev-parse HEAD" 2>/dev/null)"
     [[ -n "$remote_hash" && "$local_hash" == "$remote_hash" ]]
 }
 
 _git-status-remote() {
     local host="$1" repo_path="$2"
-    ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$host" "cd $repo_path && git pull --ff-only --quiet && git status -sb" 2>&1
+    ssh -o BatchMode=yes -o ConnectTimeout=5 "$host" "cd $repo_path && git pull --ff-only --quiet && git status -sb" 2>&1
     local local_hash remote_hash
     local_hash="$(git -C "$repo_path" rev-parse HEAD 2>/dev/null)"
-    remote_hash="$(ssh -A -o BatchMode=yes -o ConnectTimeout=5 "$host" "git -C $repo_path rev-parse HEAD" 2>/dev/null)"
+    remote_hash="$(ssh -o BatchMode=yes -o ConnectTimeout=5 "$host" "git -C $repo_path rev-parse HEAD" 2>/dev/null)"
     [[ -n "$remote_hash" && "$local_hash" == "$remote_hash" ]]
 }
 
