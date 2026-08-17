@@ -4,7 +4,10 @@
 #
 
 typeset -gA GIT_SYNC_REPOS=(
+    ai-context   "$HOME/.jkyon-ai-context"
+    nvim         "$HOME/.config/nvim"
     shellscript  "$HOME/ShellScript"
+    systemd      "$HOME/.jkyon-systemd"
     terminal     "$HOME/.jKy0n-terminal"
 )
 
@@ -85,6 +88,29 @@ _git-status-remote() {
 }
 
 #------------------------------------------------------------------------------
+# _git-local-sync-check: garante que o HEAD local está em dia com o origin
+#                         antes de qualquer comparação de hash remota.
+#                         behind -> resolve sozinho (pull --ff-only).
+#                         ahead  -> NÃO resolve sozinho (evita push cego de
+#                                   código não revisado); só avisa e retorna 1.
+#------------------------------------------------------------------------------
+_git-local-sync-check() {
+    local name="$1" repo_path="$2" ahead behind
+
+    git -C "$repo_path" fetch --quiet 2>/dev/null
+    ahead="$(git -C "$repo_path" rev-list --count '@{u}..HEAD' 2>/dev/null)"
+    behind="$(git -C "$repo_path" rev-list --count 'HEAD..@{u}' 2>/dev/null)"
+
+    if [[ "$ahead" -gt 0 ]]; then
+        print -P "%F{red}⚠️  [$name] local está $ahead commit(s) à frente do origin — dá 'git -C $repo_path push' antes de sincronizar%f"
+        return 1
+    fi
+
+    [[ "$behind" -gt 0 ]] && git -C "$repo_path" pull --ff-only --quiet
+    return 0
+}
+
+#------------------------------------------------------------------------------
 # git-sync [nome]: sem argumento, sincroniza TODOS os repos registrados em
 #                  todas as máquinas. Com argumento, só aquele repo.
 #------------------------------------------------------------------------------
@@ -98,6 +124,7 @@ git-sync() {
 
     for name repo_path in "${(@kv)GIT_SYNC_REPOS}"; do
         [[ -n "$target" && "$name" != "$target" ]] && continue
+        _git-local-sync-check "$name" "$repo_path" || { failed=1; continue }
         for host in "${GIT_SYNC_HOSTS[@]}"; do
             if [[ "${(L)host}" == "${(L)HOST}" ]]; then
                 print; print -P "%F{yellow}⏭️  [$name] $host é esta máquina, pulando%f"
@@ -122,6 +149,7 @@ git-status-all() {
 
     for name repo_path in "${(@kv)GIT_SYNC_REPOS}"; do
         [[ -n "$target" && "$name" != "$target" ]] && continue
+        _git-local-sync-check "$name" "$repo_path" || { failed=1; continue }
         for host in "${GIT_SYNC_HOSTS[@]}"; do
             if [[ "${(L)host}" == "${(L)HOST}" ]]; then
                 print; print -P "%F{yellow}⏭️  [$name] $host é esta máquina, pulando%f"
