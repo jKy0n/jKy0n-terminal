@@ -33,5 +33,5 @@ source "$ZDOTDIR/shared/theme.zsh"
 
 [[ -r "$ZDOTDIR/shared/functions/git.zsh" ]] && source "$ZDOTDIR/shared/functions/git.zsh"
 [[ -r "$ZDOTDIR/shared/functions/ssh-agent.zsh" ]] && source "$ZDOTDIR/shared/functions/ssh-agent.zsh"
-[[ -r "$ZDOTDIR/shared/aliases.zsh" ]] && source "$ZDOTDIR/shared/aliases.zsh"
+[[ -r "$ZDOTDIR/shared/alias.zsh" ]] && source "$ZDOTDIR/shared/alias.zsh"
 [[ -r "$ZDOTDIR/shared/tmux.zsh" ]] && source "$ZDOTDIR/shared/tmux.zsh"

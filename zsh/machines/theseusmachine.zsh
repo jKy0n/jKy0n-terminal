@@ -1,1 +1,20 @@
-# TheseusMachine — sem overrides por enquanto.
+#
+#        Title:      theseusmachine.zsh
+#        Brief:
+#        Path:       /home/jkyon/.jKy0n-terminal/zsh/machines/theseusmachine.zsh
+#        Author:     John Kennedy a.k.a. jKyon
+#        Created:    2026-08-07
+#        Updated:    2026-08-18
+#        Notes:
+#
+
+
+# Aliases específicos (Gentoo/Portage — não fazem sentido fora daqui)
+alias distcc-portage-watch='nice --adjustment=19 env DISTCC_DIR=/var/tmp/portage/.distcc distccmon-text 1'
+alias genlop-watch='nice --adjustment=19 watch --color --interval 1 genlop -ci'
+alias portage-sync='update-mirrorselect && sudo emerge --verbose --sync && update-distro'
+alias portage-unused-ranker='sh /home/jkyon/ShellScript/TheseusMachine/portage-tools/portage-unused-ranker/portage-unused-ranker.sh'
+alias radeontop='radeontop --color --transparency'
+alias satisfactory-server='sh /home/jkyon/ShellScript/Games/satisfactory-server-update.sh'
+alias update-mirrorselect='sh /home/jkyon/ShellScript/TheseusMachine/systemd/PortageSync/systemd-mirrorselect-update.sh'
+alias wacom-set-stylus='xsetwacom set "Wacom Intuos S Pen stylus" MapToOutput DisplayPort-0' # Funciona no niri?
